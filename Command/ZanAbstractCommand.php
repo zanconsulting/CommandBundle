@@ -108,4 +108,25 @@ abstract class ZanAbstractCommand extends ContainerAwareCommand
     {
         return $this->getContainer()->get("doctrine")->getManager();
     }
+
+    /**
+     * Uses the EntityManager to persist the given Entity (or group of Entities)
+     * and immediately save to the database.
+     *
+     * @param object|array $data
+     */
+    protected function persistAndFlush($data)
+    {
+        $em = $this->getEm();
+
+        if (is_array($data) || $data instanceof \Traversable) {
+            foreach ($data as $entity) {
+                $em->persist($entity);
+            }
+        } else {
+            $em->persist($data);
+        }
+
+        $em->flush();
+    }
 }
